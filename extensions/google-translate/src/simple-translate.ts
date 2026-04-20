@@ -20,7 +20,20 @@ export type SimpleTranslateResult = {
   proxy?: string;
 };
 
-export class TranslateError extends Error {}
+export async function detectLanguage(text: string, proxy?: string): Promise<LanguageCode | null> {
+  try {
+    if (!text) return null;
+    const translated = await translate(text, {
+      from: AUTO_DETECT,
+      to: "en", // dummy
+      raw: true,
+      proxy,
+    });
+    return translated?.from?.language?.iso as LanguageCode;
+  } catch {
+    return null;
+  }
+}
 
 const extractPronounceTextFromRaw = (raw: string) => {
   return raw?.[0]?.[1]?.[2];

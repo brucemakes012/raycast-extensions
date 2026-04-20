@@ -21,7 +21,9 @@
     "litomore",
     "ChanningKuo",
     "likid",
-    "xmok",
+    "xmok"
+  ],
+  "pastContributors": [
     "brucemakes012"
   ],
   "license": "MIT",
@@ -2110,6 +2112,28 @@
         {
           "title": "Paste to App",
           "value": "paste"
+        }
+      ]
+    },
+    {
+      "name": "outputMatchesInput",
+      "title": "If target language matches source",
+      "description": "In the quick translate command, pick what happens when a target language in the list matches the source language",
+      "type": "dropdown",
+      "required": false,
+      "default": "doNothing",
+      "data": [
+        {
+          "title": "Do nothing",
+          "value": "doNothing"
+        },
+        {
+          "title": "Move target language to bottom",
+          "value": "moveToBottom"
+        },
+        {
+          "title": "Hide target language",
+          "value": "hide"
         }
       ]
     },

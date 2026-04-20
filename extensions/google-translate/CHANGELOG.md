@@ -1,5 +1,10 @@
 # Google Translate Changelog
 
+## [Feature] - {PR_MERGE_DATE}
+
+ - In the quick translate command, if auto-detected source language is in target list, hide the matching target language or move it to bottom of the list
+ - Added extension preferences for above feature
+
 ## [Feature] - 2026-04-15
 
  - Added pronunciation text to quick translate command

@@ -36,6 +36,7 @@ export function QuickTranslateListItem(props: {
   if (isLoading) {
     return (
       <List.Item
+        id={langTo.code}
         title={`Translating to ${langTo.name}...`}
         accessories={[
           {
@@ -58,6 +59,7 @@ export function QuickTranslateListItem(props: {
 
   return (
     <List.Item
+      id={langTo.code}
       key={langTo.code}
       title={result.translatedText}
       accessories={[
