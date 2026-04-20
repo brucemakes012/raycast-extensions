@@ -1,7 +1,8 @@
 import React from "react";
 import { ActionPanel, List, Toast, showToast } from "@raycast/api";
+import { useEffect } from "react";
 import { usePromise } from "@raycast/utils";
-import { supportedLanguagesByCode } from "../languages";
+import { supportedLanguagesByCode, LanguageCode } from "../languages";
 import { simpleTranslate } from "../simple-translate";
 import { LanguageCodeSet } from "../types";
 import { ConfigurableCopyPasteActions, OpenOnGoogleTranslateWebsiteAction, ToggleFullTextAction } from "../actions";
@@ -12,6 +13,7 @@ export function QuickTranslateListItem(props: {
   isShowingDetail: boolean;
   setIsShowingDetail: (isShowingDetail: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
+  onDetectedSourceLanguage: (language: LanguageCode) => void;
 }) {
   let langFrom = supportedLanguagesByCode[props.languageSet.langFrom];
   const langTo = supportedLanguagesByCode[props.languageSet.langTo[0]];
@@ -32,6 +34,16 @@ export function QuickTranslateListItem(props: {
       });
     },
   });
+
+  useEffect(() => {
+    if (!result) {
+      return;
+    }
+
+    if (props.languageSet.langFrom === "auto") {
+      props.onDetectedSourceLanguage(result.langFrom);
+    }
+  }, [result, props.languageSet.langFrom, props.onDetectedSourceLanguage]);
 
   if (isLoading) {
     return (

@@ -1,10 +1,10 @@
 import { List } from "@raycast/api";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { LanguageDropdown } from "./QuickTranslate/LanguageDropdown";
 import { QuickTranslateListItem } from "./QuickTranslate/QuickTranslateListItem";
 import { useDebouncedValue, usePreferences, useSourceLanguage, useTargetLanguages, useTextState } from "./hooks";
 import { LanguageCode } from "./languages";
-import { AUTO_DETECT, detectLanguage } from "./simple-translate";
+import { AUTO_DETECT } from "./simple-translate";
 
 export default function QuickTranslate(): ReactElement {
   const [sourceLanguage] = useSourceLanguage();
@@ -16,27 +16,31 @@ export default function QuickTranslate(): ReactElement {
 
   const [detectedSourceLanguage, setDetectedSourceLanguage] = useState<LanguageCode | null>(null);
 
+  const handleDetectedSourceLanguage = useCallback((language: LanguageCode) => {
+    setDetectedSourceLanguage((prev) => (prev === language ? prev : language));
+  }, []);
+
   useEffect(() => {
-    if (sourceLanguage === AUTO_DETECT && debouncedText) {
-      detectLanguage(debouncedText, proxy).then(setDetectedSourceLanguage);
-    } else {
+    if (sourceLanguage !== AUTO_DETECT || !debouncedText) {
       setDetectedSourceLanguage(null);
     }
-  }, [sourceLanguage, debouncedText, proxy]);
+  }, [sourceLanguage, debouncedText]);
 
   const effectiveSourceLanguage = sourceLanguage === AUTO_DETECT ? detectedSourceLanguage : sourceLanguage;
 
-  let processedTargetLanguages = targetLanguages;
-  if (effectiveSourceLanguage && targetLanguages.includes(effectiveSourceLanguage)) {
-    if (outputMatchesInput === "hide" && targetLanguages.length > 1) {
-      processedTargetLanguages = targetLanguages.filter((lang) => lang !== effectiveSourceLanguage);
-    } else if (outputMatchesInput === "moveToBottom") {
-      processedTargetLanguages = [
-        ...targetLanguages.filter((lang) => lang !== effectiveSourceLanguage),
-        effectiveSourceLanguage,
-      ];
+  const processedTargetLanguages = useMemo(() => {
+    if (effectiveSourceLanguage && targetLanguages.includes(effectiveSourceLanguage)) {
+      if (outputMatchesInput === "hide" && targetLanguages.length > 1) {
+        return targetLanguages.filter((lang) => lang !== effectiveSourceLanguage);
+      }
+
+      if (outputMatchesInput === "moveToBottom") {
+        return [...targetLanguages.filter((lang) => lang !== effectiveSourceLanguage), effectiveSourceLanguage];
+      }
     }
-  }
+
+    return targetLanguages;
+  }, [targetLanguages, effectiveSourceLanguage, outputMatchesInput]);
 
   const [loadingStates, setLoadingStates] = useState(new Map(processedTargetLanguages.map((lang) => [lang, false])));
 
@@ -83,6 +87,7 @@ export default function QuickTranslate(): ReactElement {
               isShowingDetail={isShowingDetail}
               setIsShowingDetail={setIsShowingDetail}
               setIsLoading={(isLoading) => setIsLoading(targetLanguage, isLoading)}
+              onDetectedSourceLanguage={handleDetectedSourceLanguage}
             />
           ))
         : null}
