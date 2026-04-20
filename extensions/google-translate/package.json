@@ -2117,7 +2117,7 @@
     },
     {
       "name": "outputMatchesInput",
-      "title": "If target language matches source",
+      "title": "Target Language Behavior",
       "description": "In the quick translate command, pick what happens when a target language in the list matches the source language",
       "type": "dropdown",
       "required": false,
