@@ -20,6 +20,8 @@ export type SimpleTranslateResult = {
   proxy?: string;
 };
 
+export class TranslateError extends Error {}
+
 export async function detectLanguage(text: string, proxy?: string): Promise<LanguageCode | null> {
   try {
     if (!text) return null;
